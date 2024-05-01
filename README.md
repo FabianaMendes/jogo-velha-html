@@ -1,8 +1,8 @@
-<img align="center" alt="video" title="#video" src="jogo-velha.gif">
-
 ## Descrição
 
 Projeto HTML, CSS e Javascript criado para a 1ª Oficina de Programação do Colégio Nacional/2024
+
+<img alt="gif" src="jogo-velha.gif" height="400px">
 
 ## Como rodar o projeto
 
