@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Jogo da Velha</title>
+  </head>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      margin-top: 100px;
+      font-family: sans-serif;
+    }
+    h2 {
+      margin: 0;
+      padding-bottom: 30px;
+    }
+    a {
+      text-decoration: none;
+      border: 1px solid black;
+      padding: 10px;
+      background-color: black;
+      color: white;
+      font-weight: 500;
+      border-radius: 4px;
+      margin-bottom: 80px;
+    }
+    a:hover {
+      background-color: #404040;
+    }
+    #jogo{
+      margin: 0 auto;
+      display: grid;
+      width: 500px;
+      height: 500px;
+      grid-template-rows: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 1fr);
+    }
+    #jogo > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    #jogo > div:hover {
+      background-color: #f0f0f0;
+    }
+    #b, #e, #h {
+      border-left: 15px solid black;
+      border-right: 15px solid black;
+    }
+    #d, #e, #f {
+      border-top: 15px solid black;
+      border-bottom: 15px solid black;
+    }
+  </style>
+  <script>
+    const jogoVelha = [
+      ['', '', ''],
+      ['', '', ''],
+      ['', '', '']
+    ]
+    let jogador = 'O'
+    let contadorJogadas = 0
+    let posicoesVitoriosas = []
+    let fimDeJogo = false
+    let deuVelha = false
+
+    window.onload = function() {
+      const listaElementos = document.querySelectorAll("#jogo > div")
+      const subtitulo = document.querySelector('h2')
+
+      function checarVitoria() {
+        for(let i = 0;i < 3; i++) {
+          /** 
+           * Compara se tem elementos iguais na vertical,
+           * nas colunas 0, 1 e 2
+          */
+          if (jogoVelha[0][i]!= ''
+            && jogoVelha[0][i] == jogoVelha[1][i]
+            && jogoVelha[1][i] == jogoVelha[2][i]) {
+              posicoesVitoriosas.push(i+1) //primeiro elemento
+              posicoesVitoriosas.push(i+4) //segundo elemento
+              posicoesVitoriosas.push(i+7) //terceiro elemento
+              return jogoVelha[0][i]
+            }
+          /** 
+           * Compara se tem elementos iguais na horizontal,
+           * nas linhas 0, 1 e 2
+          */
+          if (jogoVelha[i][0]!= ''
+            && jogoVelha[i][0] == jogoVelha[i][1]
+            && jogoVelha[i][1] == jogoVelha[i][2]) {
+              posicoesVitoriosas.push((i*3)+1) //primeiro elemento
+              posicoesVitoriosas.push((i*3)+2) //segundo elemento
+              posicoesVitoriosas.push((i*3)+3) //terceiro elemento
+              return jogoVelha[i][0]
+            }
+        }
+
+        /** 
+         * Compara se tem elementos iguais na diagonal,
+         * da esquerda para direita
+        */
+        if (jogoVelha[0][0]!= ''
+          && jogoVelha[0][0] == jogoVelha[1][1]
+          && jogoVelha[1][1] == jogoVelha[2][2]) {
+            posicoesVitoriosas = [1, 5, 9]
+            return jogoVelha[0][0]
+          }
+        /** 
+         * Compara se tem elementos iguais na diagonal,
+         * da direita para esquerda
+        */
+        if (jogoVelha[0][2]!= ''
+          && jogoVelha[0][2] == jogoVelha[1][1]
+          && jogoVelha[1][1] == jogoVelha[2][0]) {
+            posicoesVitoriosas = [3, 5, 7]
+            return jogoVelha[0][2]
+          }
+        return ''
+      }
+
+      function clickElemento(elementoClicado) {
+        if (!fimDeJogo && !deuVelha) {
+          const item = elementoClicado.target
+          const numeroItem = item.dataset.item
+          const linha = Math.floor((numeroItem-1)/3)
+          const coluna = (numeroItem-1) % 3
+
+          if (item.innerText == '') {
+            jogoVelha[linha][coluna] = jogador
+            item.innerText = jogador
+            contadorJogadas++
+            const jogadorCampeao = checarVitoria()
+
+            if (jogadorCampeao != '') {
+              fimDeJogo = true
+              subtitulo.textContent = `O jogador campeão foi o "${jogadorCampeao}"`
+              posicoesVitoriosas.forEach(posicao => {
+                document.querySelector(`[data-item="${posicao}"]`).style.color = 'green'
+              })
+              return
+            }
+
+            if (contadorJogadas == 9) {
+              deuVelha = true
+              subtitulo.textContent = 'Opa! O jogo deu Velha!'
+              listaElementos.forEach((elemento, index) => {
+                document.querySelector(`[data-item="${index+1}"]`).style.color = 'red'
+              })
+              return
+            }
+
+            if (jogador === 'O') {
+              jogador = 'X'
+            } else {
+              jogador = 'O'
+            }
+
+            subtitulo.textContent = `O jogador da vez é o "${jogador}"`
+          }
+        }
+      }
+
+      listaElementos.forEach((element) => {
+        element.addEventListener('click', clickElemento)
+      })
+    }
+  </script>
+  <body>
+    <h1 id="title">Jogo da Velha</h1>
+    <h2 id="subtitle">
+      O jogador da vez é o "O"
+    </h2>
+    <a href="">Reiniciar Jogo</a>
+    <div id="jogo">
+      <div data-item="1" id="a"></div>
+      <div data-item="2" id="b"></div>
+      <div data-item="3" id="c"></div>
+      <div data-item="4" id="d"></div>
+      <div data-item="5" id="e"></div>
+      <div data-item="6" id="f"></div>
+      <div data-item="7" id="g"></div>
+      <div data-item="8" id="h"></div>
+      <div data-item="9" id="i"></div>
+    </div>
+  </body>
+</html>
