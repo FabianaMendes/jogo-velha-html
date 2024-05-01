@@ -1,4 +1,4 @@
-<img align="center" alt="video" title="#video" src="./jogo-velha.webm">
+<img align="center" alt="video" title="#video" src="jogo-velha.gif">
 
 ## Descrição
 
